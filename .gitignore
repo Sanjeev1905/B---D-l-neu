@@ -1,0 +1,95 @@
+# =========================
+# Large physics/data files
+# =========================
+*.root
+*.root.*
+*.npy
+*.npz
+*.h5
+*.hdf5
+*.onnx
+*.keras
+*.weights
+*.ckpt
+
+# =========================
+# PDFs and documents
+# =========================
+*.pdf
+
+# =========================
+# Large compressed files
+# =========================
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.bz2
+*.7z
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.ipynb_checkpoints/
+
+# =========================
+# Virtual environments
+# =========================
+venv/
+.venv/
+env/
+
+# =========================
+# ML / experiment outputs
+# =========================
+checkpoints/
+models/
+runs/
+logs/
+tensorboard/
+wandb/
+
+# =========================
+# Generated datasets
+# =========================
+dataset/
+datasets/
+data/
+output/
+outputs/
+results/
+
+# =========================
+# Belle II / basf2 generated files
+# =========================
+*.mdst
+*.udst
+*.sroot
+*.dst
+*.pkl
+*.pickle
+
+# =========================
+# C++ build files
+# =========================
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+Makefile
+*.o
+*.so
+
+# =========================
+# OS / editor
+# =========================
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
