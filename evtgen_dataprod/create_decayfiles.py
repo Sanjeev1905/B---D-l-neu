@@ -1,54 +1,86 @@
 import os
 import numpy as np
 
-# Define the ranges
+# Coupling parameter ranges
 g_L_values = np.linspace(0.0, 0.08, 9)
 g_R_values = np.linspace(0.00, 0.105, 8)
 g_P_values = np.linspace(-0.6, 0.0, 7)
 
+# Input decay file
+input_dec_file = "../stering/hp_dec.dec"
 
+# Output directory: all files will be saved here
+output_dir = (
+    "/home/belle2/sanjeeva/B2dstrlnu/"
+    "diamond_frame/myAnalysis/evtgen_dataprod/decfiles"
+)
+os.makedirs(output_dir, exist_ok=True)
 
-# Template for the line to be modified
-template_line = "1   D*+    mu-   anti-nu_mu   BTODSTARLNUNP 0 0 {g_L:.3f} 0 1 {g_R:.3f} 0 2 0 {g_P:.3f} 3 0 {neg_g_P:.3f};\n"
+# Template for the modified decay line
+template_line = (
+    "1   D*+sig    mu-   anti-nu_mu   BTODSTARLNUNP "
+    "0 0 {g_L:.3f} 0 1 {g_R:.3f} 0 2 0 {g_P:.3f} "
+    "3 0 {neg_g_P:.3f};\n"
+)
 
+# Read the original decay file once
+with open(input_dec_file, "r") as f:
+    original_content = f.readlines()
 
-for sample in range (0, 226):
-    # Base directory to save files
-    parent_dir = "decfiles_b2dstar_np_070726" 
-    base_directory = os.path.join(parent_dir, "decfile" + str(sample))
+# Find the active decay line
+target_indices = [
+    i for i, line in enumerate(original_content)
+    if (
+        "D*+sig" in line
+        and "mu-" in line
+        and "anti-nu_mu" in line
+        and "BTODSTARLNUNP" in line
+        and not line.lstrip().startswith("#")
+    )
+]
 
+if len(target_indices) != 1:
+    raise RuntimeError(
+        f"Expected exactly one matching active decay line, "
+        f"found {len(target_indices)}"
+    )
 
-    # Create base directory if it doesn't exist
-    if not os.path.exists(base_directory):
-        os.makedirs(base_directory)
+target_index = target_indices[0]
 
-    # Iterate over all values of g_L, g_R, and g_P
-    for g_L in g_L_values:
-        g_L_directory = os.path.join(base_directory, f"decay_{g_L:.3f}")
-        os.makedirs(g_L_directory, exist_ok=True)
+# Generate every possible combination
+count = 0
 
-        for g_R in g_R_values:
-            g_R_directory = os.path.join(g_L_directory, f"decay_{g_L:.3f}_{g_R:.3f}")
-            os.makedirs(g_R_directory, exist_ok=True)
+for g_L in g_L_values:
+    for g_R in g_R_values:
+        for g_P in g_P_values:
 
-            for g_P in g_P_values:
-                filename = os.path.join(g_R_directory, f"decay_{g_L:.3f}_{g_R:.3f}_{g_P:.3f}.dec")
-                
-                # Read the original .dec file
-                with open("BB_dstarlnu_np.dec", "r") as f:
-                    content = f.readlines()
+            # Calculate negative g_P
+            neg_g_P = -g_P
 
-                # Modify the specific line with the new values of g_L, g_R, and g_P
-                modified_content = []
-                for line in content:
-                    if "1   D*+    mu-   anti-nu_mu   BTODSTARLNUNP" in line:
-                        # Calculate negative g_P
-                        neg_g_P = -g_P
-                        modified_line = template_line.format(g_L=g_L, g_R=g_R, g_P=g_P, neg_g_P=neg_g_P)
-                        modified_content.append(modified_line)
-                    else:
-                        modified_content.append(line)
-                
-                # Write the modified content to the new file
-                with open(filename, "w") as f:
-                    f.writelines(modified_content)
+            # Create modified decay line
+            modified_line = template_line.format(
+                g_L=g_L,
+                g_R=g_R,
+                g_P=g_P,
+                neg_g_P=neg_g_P
+            )
+
+            # Replace only the target line
+            modified_content = original_content.copy()
+            modified_content[target_index] = modified_line
+
+            # Filename identifying the coupling parameters
+            filename = (
+                f"decay_{g_L:.3f}_{g_R:.3f}_{g_P:.3f}.dec"
+            )
+
+            output_path = os.path.join(output_dir, filename)
+
+            # Write the new decay file
+            with open(output_path, "w") as f:
+                f.writelines(modified_content)
+
+            count += 1
+
+print(f"Generated {count} decay files.")
+print(f"All files saved in: {output_dir}")

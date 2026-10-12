@@ -1,8 +1,10 @@
 import ROOT
 import variables
 
-input_file = "../data/sm_01_50k.root"
-output_file = "../data/sm_50k_diamond.root"
+input_file = "../data/np_10k_var.root"
+# output_file = "../data/sm_10k_diamond_new.root"
+output_file = "../data/np_10k_diamond.root"
+
 tree_name = "all_vars"
 
 rdf = ROOT.RDataFrame(tree_name, input_file)
