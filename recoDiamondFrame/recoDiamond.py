@@ -3,7 +3,7 @@ import variables
 
 input_file = "../data/np_10k_var.root"
 # output_file = "../data/sm_10k_diamond_new.root"
-output_file = "../data/np_10k_diamond.root"
+output_file = "np_10k_diamond.root"
 
 tree_name = "all_vars"
 

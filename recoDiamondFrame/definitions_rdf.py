@@ -394,9 +394,16 @@ chi = r"""
         // We calculate the normal vectors of the decay two planes
         XYZVector normalVectorDST   = dst4Vector.Vect().Cross(d04Vector.Vect());
         XYZVector normalVectordilpt = dilepton4Vector.Vect().Cross(lepton4Vector.Vect());
-        
-        return std::atan2((normalVectorDST.Unit().Cross(normalVectordilpt.Unit())).Dot(dst4Vector.Vect().Unit()), 
+
+        double chi = std::atan2((normalVectorDST.Unit().Cross(normalVectordilpt.Unit())).Dot(dst4Vector.Vect().Unit()), 
                             normalVectorDST.Unit().Dot(normalVectordilpt.Unit()));
+
+        if (chi < 0) {
+            chi += 2*M_PI;
+        }
+
+        return chi;
+        
     }"""
 
 
@@ -450,6 +457,11 @@ chi_alt = r"""
         double chi = std::atan2(
             (n_D.Unit().Cross(n_L.Unit())).Dot(z),
             n_D.Unit().Dot(n_L.Unit())
-        );                  
+        ); 
+
+        if (chi < 0) {
+            chi += 2*M_PI;
+        }
+                         
         return chi;
     }"""
