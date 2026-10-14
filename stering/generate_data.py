@@ -14,6 +14,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument("events", type=int, help="Number of events to generate")
 parser.add_argument("dec_file", type=str, help="Decay file to use for event generation")
 parser.add_argument("root_file", type=str, help="Output root file name")
+parser.add_argument("--seed", type=int, default=12345,help="Random seed")
+
+args = parser.parse_args()
+
+b2.set_random_seed(args.seed)
+
+print(f"Using random seed: {args.seed}")
 
 args = parser.parse_args()
 

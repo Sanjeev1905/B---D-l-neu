@@ -40,7 +40,7 @@ vm.addAlias('goodKaons','passesCut(goodTracks and kaonID > 0.1 )')  # good kaons
 vm.addAlias('goodPions','passesCut(goodTracks and pionID > 0.1 )')
 vm.addAlias('goodPions_slow','passesCut(goodTrack_slow and pionID > 0.1)')
 # vm.addAlias('goodMuons','passesCut(goodTracks and muonID > 0.9)')
-vm.addAlias('goodMuons','passesCut(goodTracks and muonID>0.9 and inKLMAcceptance and useCMSFrame(p) >0.1 and useCMSFrame(p)<2.4)')  # good muons:sl
+vm.addAlias('goodMuons','passesCut(goodTracks and muonID>0.9 and inKLMAcceptance and useCMSFrame(p) >0.6 )')  # good muons:sl
 
 
 # supress Bhabha scattering
