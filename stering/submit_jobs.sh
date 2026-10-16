@@ -1,35 +1,74 @@
 #!/bin/bash
 
-# Number of jobs
-N_JOBS=10
+# Number of samples per coupling combination
+N_SAMPLES=10
 
-# Number of events per job
-EVENTS=50000
+# Number of events per sample
+EVENTS=5000
 
-# Decay file
-DEC_FILE="hp_dec.dec"
+# Directory containing decay files
+DEC_DIR="../evtgen_dataprod/decfiles"
 
-# Output directory
-OUT_DIR="../data/sm"
+# Base output directory
+OUT_BASE="../data/samples"
 
-# Create output directory if it does not exist
-mkdir -p "$OUT_DIR"
+# Starting random seed
+BASE_SEED=12345
 
-# Submit jobs
-for i in $(seq 1 "$N_JOBS"); do
+# Create output directory
+mkdir -p "$OUT_BASE"
 
-    # Different random seed for each job
-    SEED=$((12345 + i))
+# Find all decay files
+shopt -s nullglob
+DEC_FILES=("$DEC_DIR"/decay_*.dec)
 
-    # Output ROOT and log files
-    ROOT_FILE="${OUT_DIR}/np_50k_${i}.root"
-    LOG_FILE="${OUT_DIR}/out_${i}.txt"
+if [ ${#DEC_FILES[@]} -eq 0 ]; then
+    echo "ERROR: No decay_*.dec files found in $DEC_DIR"
+    exit 1
+fi
 
-    echo "Submitting job $i with seed $SEED"
+JOB_COUNT=0
 
-    bsub -q h "basf2 generate_data.py -- ${EVENTS} ${DEC_FILE} ${ROOT_FILE} --seed ${SEED} > ${LOG_FILE} 2>&1"
+for DEC_FILE in "${DEC_FILES[@]}"; do
 
+    # Extract coupling values from the filename
+    FILENAME=$(basename "$DEC_FILE" .dec)
+    COUPLINGS=${FILENAME#decay_}
+
+    sample_count=0
+
+    # Create directory for this coupling combination
+    OUT_DIR="${OUT_BASE}/${COUPLINGS}"
+    mkdir -p "$OUT_DIR"
+
+    echo "Processing $DEC_FILE"
+
+    for i in $(seq 1 "$N_SAMPLES"); do
+
+        # Unique seed for each job
+        SEED=$((BASE_SEED + sample_count + 1))
+
+        # Output filenames
+        ROOT_FILE="${OUT_DIR}/mdst_${COUPLINGS}_${i}_seed${SEED}.root"
+        LOG_FILE="${OUT_DIR}/mdst_${COUPLINGS}_${i}_seed${SEED}.log"
+
+        # Skip existing ROOT files
+        if [ -f "$ROOT_FILE" ]; then
+            echo "Skipping existing file: $ROOT_FILE"
+            continue
+        fi
+
+        echo "Submitting job $((JOB_COUNT + 1)): $ROOT_FILE (seed=$SEED)"
+
+        bsub -q s \
+            "basf2 generate_data.py -- ${EVENTS} ${DEC_FILE} ${ROOT_FILE} --seed ${SEED} > ${LOG_FILE} 2>&1"
+
+        JOB_COUNT=$((JOB_COUNT + 1))
+        sample_count=$((sample_count + 1))
+
+    done
 done
 
-echo "All $N_JOBS jobs submitted."
-echo "Output directory: $OUT_DIR"
+echo "Submission completed."
+echo "Jobs submitted: $JOB_COUNT"
+echo "Output directory: $OUT_BASE"
