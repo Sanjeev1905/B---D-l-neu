@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Number of samples per coupling combination
-N_SAMPLES=10
+N_SAMPLES=20
 
 # Number of events per sample
 EVENTS=5000
