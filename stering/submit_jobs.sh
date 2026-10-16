@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Number of samples per coupling combination
-N_SAMPLES=20
+N_SAMPLES=330
 
 # Number of events per sample
 EVENTS=5000
@@ -10,7 +10,7 @@ EVENTS=5000
 DEC_DIR="../evtgen_dataprod/decfiles"
 
 # Base output directory
-OUT_BASE="../data/samples"
+OUT_BASE="../data/samples2"
 
 # Starting random seed
 BASE_SEED=12345
