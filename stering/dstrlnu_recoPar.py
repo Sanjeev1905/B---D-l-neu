@@ -15,6 +15,11 @@ import glob
 import os
 import vertex as vx
 
+parser = argparse.ArgumentParser()
+parser.add_argument("input_file", type=str, help="Input root file name")
+parser.add_argument("output_file", type=str, help="Output root file name")
+args = parser.parse_args()
+
 
 
 # analysis_gt = ma.getAnalysisGlobaltag()
@@ -26,10 +31,13 @@ main = b2.create_path()
 isSignal = True
 tag = "mu"
 # If input file, we enter in testing mode
-inRootFile = "../data/sample/*.root"
+# inRootFile = "../data/sample/*.root"
 
-parts = inRootFile.split("_")
-outRootFile = "../data/recoDslnu/" + parts[0] + "_" + parts[1] + "_" + parts[2] + "_" + parts[3] + "_var.root"
+inRootFile = args.input_file
+outRootFile = args.output_file
+
+# parts = inRootFile.split("_")
+# outRootFile = "../data/recoDslnu/" + parts[0] + "_" + parts[1] + "_" + parts[2] + "_" + parts[3] + "_var.root"
 
 #input
 ma.inputMdst(environmentType="default",filename=inRootFile, path=main)

@@ -10,7 +10,7 @@ EVENTS=5000
 DEC_DIR="../evtgen_dataprod/decfiles"
 
 # Base output directory
-OUT_BASE="../data/samples2"
+OUT_BASE="/group/belle/users/samples2"
 
 # Starting random seed
 BASE_SEED=12345
